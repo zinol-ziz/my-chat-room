@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💬 چت هوشمند</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- صفحه ورود -->
+  <div id="login-page">
+    <div class="login-box">
+      <h2>🔐 ورود به چت</h2>
+      <input type="text" id="username" placeholder="نام کاربری" />
+      <input type="password" id="password" placeholder="رمز عبور" />
+      <button onclick="login()">ورود</button>
+      <p><a href="#" onclick="showRegister()">حساب نداری؟ ثبت‌نام کن</a></p>
+
+      <div id="register-form" style="display:none; margin-top:20px;">
+        <h3>📝 ثبت‌نام</h3>
+        <input type="text" id="reg-username" placeholder="نام کاربری" />
+        <input type="password" id="reg-password" placeholder="رمز عبور" />
+        <button onclick="register()">ثبت‌نام</button>
+        <p><a href="#" onclick="showLogin()">بازگشت</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحه چت -->
+  <div id="chat-page" style="display:none;">
+    <div class="chat-container">
+      <div class="sidebar">
+        <h3>کاربران آنلاین</h3>
+        <ul id="users-list">
+          <li onclick="openProfile('شما')">شما <span class="status online">🟢</span></li>
+        </ul>
+        <button onclick="logout()" class="exit-btn">🚪 خروج از چت</button>
+      </div>
+
+      <div class="chat-box">
+        <div id="video-grid"></div>
+        <div id="chat-messages"></div>
+        <div class="input-area">
+          <input type="text" id="message-box" placeholder="پیام..." onkeydown="if(event.key==='Enter')sendMessage()" />
+          <button onclick="sendMessage()">ارسال</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
