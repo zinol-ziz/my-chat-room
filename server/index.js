@@ -13,18 +13,38 @@ const io = socketIo(server, {
 
 app.use(express.static('public'));
 
+// کاربران آنلاین
+const users = {};
+const rooms = ['عمومی'];
+const reports = [];
+
 io.on('connection', (socket) => {
   console.log('کاربر متصل شد:', socket.id);
 
-  socket.on('join-room', (roomId) => {
-    socket.join(roomId);
-    socket.to(roomId).emit('user-connected', socket.id);
+  // ارسال اتاق‌ها
+  socket.emit('rooms-list', rooms);
+
+  // ارسال کاربران
+  socket.emit('users-list', Object.values(users));
+
+  // ورود کاربر
+  socket.on('join', (userData) => {
+    users[socket.id] = { ...userData, socketId: socket.id };
+    socket.join('عمومی');
+    io.emit('users-list', Object.values(users));
+    io.to('عمومی').emit('message-received', {
+      sender: 'سیستم',
+      text: `${userData.name} وارد شد`,
+      room: 'عمومی'
+    });
   });
 
+  // ارسال پیام
   socket.on('send-message', (data) => {
-    io.to(data.roomId).emit('message-received', data);
+    io.to(data.room).emit('message-received', data);
   });
 
+  // تماس صوتی/تصویری
   socket.on('offer', (data) => {
     socket.to(data.to).emit('offer', { from: socket.id, sdp: data.sdp });
   });
@@ -37,13 +57,32 @@ io.on('connection', (socket) => {
     socket.to(data.to).emit('ice-candidate', data);
   });
 
+  // گزارش پیام
+  socket.on('report-message', (data) => {
+    reports.push(data);
+    // فقط به ادمین و معاون نمایش داده میشه
+    Object.values(users).forEach(user => {
+      if (user.role === 'ادمین' || user.role === 'معاون') {
+        io.to(user.socketId).emit('new-report', data);
+      }
+    });
+  });
+
   socket.on('disconnect', () => {
-    console.log('کاربر قطع شد:', socket.id);
+    const user = users[socket.id];
+    if (user) {
+      delete users[socket.id];
+      io.emit('users-list', Object.values(users));
+      io.to('عمومی').emit('message-received', {
+        sender: 'سیستم',
+        text: `${user.name} خارج شد`,
+        room: 'عمومی'
+      });
+    }
   });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🚀 سرور در پورت ${PORT} فعال است`);
-  console.log(`باز کن در مرورگر: http://localhost:${PORT}`);
 });
