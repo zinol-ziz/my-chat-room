@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💬 چت هوشمند</title>
+  <title>💬 ChatSphere Pro</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -30,21 +30,33 @@
   <div id="chat-page" style="display:none;">
     <div class="chat-container">
       <div class="sidebar">
+        <h3>اتاق‌ها</h3>
+        <ul id="rooms-list"></ul>
+
         <h3>کاربران آنلاین</h3>
-        <ul id="users-list">
-          <li onclick="openProfile('شما')">شما <span class="status online">🟢</span></li>
-        </ul>
-        <button onclick="logout()" class="exit-btn">🚪 خروج از چت</button>
+        <ul id="users-list"></ul>
+
+        <button onclick="logout()" class="exit-btn">🚪 خروج</button>
       </div>
 
       <div class="chat-box">
-        <div id="video-grid"></div>
         <div id="chat-messages"></div>
         <div class="input-area">
           <input type="text" id="message-box" placeholder="پیام..." onkeydown="if(event.key==='Enter')sendMessage()" />
           <button onclick="sendMessage()">ارسال</button>
+          <button onclick="showGIFs()">🎭</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- مودال ایموجی متحرک -->
+  <div id="gif-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h3>ایموجی متحرک</h3>
+      <img src="https://media.tenor.com/gifs/cool-dance.gif" onclick="sendGIF(this.src)" style="width:80px; margin:5px; cursor:pointer;" />
+      <img src="https://media.tenor.com/gifs/hello-wave.gif" onclick="sendGIF(this.src)" style="width:80px; margin:5px; cursor:pointer;" />
+      <p><button onclick="closeGIFs()">بستن</button></p>
     </div>
   </div>
 
